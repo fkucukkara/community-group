@@ -4,6 +4,10 @@ The project is developed since 2022.
 
 Community Groups is a cross-platform, Docker supported project running on the ASP.NET Core 5 with MSSQL.
 
+The project can run on Docker (linux or windows) or IIS.
+
+Https is also supported.
+
 ## purpose and use cases
 
 It contains restful services to create a community on any base.
@@ -26,11 +30,6 @@ It contains restful services to create a community on any base.
 - Users can register and log in with email and password
 - People and community groups must belong to the logged-in user
 
-## demo
-
-The project can run on Docker (linux or windows) or IIS.
-Https is also supported.
-
 ## swagger
 
 **https://localhost:44308/swagger/index.html** is the adress where you can see the service list.
@@ -39,7 +38,7 @@ Authentication is required before using.
 ## security
 
 JWT is used on authentication.
-Loginl path and Demo credentials are given below:
+Login path and Demo credentials are given below:
 
 **login path:** /api/v1/Login/login
 **username:** crea
@@ -54,3 +53,4 @@ After giving the credentions you should give the token to the Authorize section 
 - Generic Repository Pattern is used on the data access layer
 - Middleware is used as central exception handling
 - URL based versioning is used
+- EntityFramework CodeFirst is used to sync the database **add-migration** and **update-database** commands are necessary
