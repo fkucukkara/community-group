@@ -1,0 +1,37 @@
+<Project>
+	<PropertyGroup>
+		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+		<CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+		<AspnetVersion>9.0.0</AspnetVersion>
+	</PropertyGroup>
+	<ItemGroup>
+
+		<PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="$(AspnetVersion)" />
+		<PackageVersion Include="Microsoft.EntityFrameworkCore" Version="$(AspnetVersion)" />
+		<PackageVersion Include="Microsoft.EntityFrameworkCore.Abstractions" Version="$(AspnetVersion)" />
+		<PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="$(AspnetVersion)"/>
+		<PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="$(AspnetVersion)" />
+		<PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="$(AspnetVersion)"/>
+		<PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
+		<PackageVersion Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="$(AspnetVersion)" />
+		<PackageVersion Include="Swashbuckle.AspNetCore" Version="7.2.0" />
+		<PackageVersion Include="Microsoft.EntityFrameworkCore.Abstractions" Version="$(AspnetVersion)" />
+		<PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="$(AspnetVersion)" />
+		<PackageVersion Include="Microsoft.EntityFrameworkCore.Abstractions" Version="$(AspnetVersion)" />
+		<PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="$(AspnetVersion)"/>
+		<PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="$(AspnetVersion)" />
+		<PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="$(AspnetVersion)"/>
+		<PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="$(AspnetVersion)" />
+		<PackageVersion Include="Microsoft.EntityFrameworkCore" Version="$(AspnetVersion)" />
+		<PackageVersion Include="Microsoft.EntityFrameworkCore.Abstractions" Version="$(AspnetVersion)" />
+		<PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="$(AspnetVersion)"/>
+		<PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="$(AspnetVersion)" />
+		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+		<PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
+		<PackageVersion Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="$(AspnetVersion)" />
+		<PackageVersion Include="Swashbuckle.AspNetCore" Version="7.2.0" />
+		<PackageVersion Include="xunit" Version="2.9.2" />
+		<PackageVersion Include="xunit.runner.visualstudio" Version="3.0.0"/>
+		<PackageVersion Include="coverlet.collector" Version="6.0.2"/>
+	</ItemGroup>
+</Project>
