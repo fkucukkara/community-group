@@ -4,12 +4,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CG.API.Controllers;
 
-[Route("api/v1/[controller]")]
+[ApiVersion("1")]
+[Route("api/v{version:apiVersion}/[controller]")]
 [ApiController]
 [Authorize]
 public class CommunityGroupController(
@@ -18,45 +18,35 @@ public class CommunityGroupController(
 {
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<CommunityGroup>>> GetCommunityGroups()
+    public async Task<IActionResult> GetAllCommunityGroups()
     {
-        return await cgRepository.GetQueryable().ToListAsync();
+        var result = await cgRepository.GetQueryable().ToListAsync();
+        return Ok(result);
     }
 
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<CommunityGroup>> GetCommunityGroup(int id)
+    public async Task<IActionResult> GetCommunityGroup(int id)
     {
-        var cg = await cgRepository.GetByIdAsync(id);
-
-        if (cg == null)
-        {
-            return NotFound();
-        }
-
-        return cg;
+        return await cgRepository.GetByIdAsync(id) is CommunityGroup cg
+           ? Ok(cg)
+           : NotFound();
     }
 
-    [HttpGet("/community/persons/{id}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetCommunityGroupWithPersons(int id)
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    public async Task<ActionResult<CommunityGroup>> CreateCommunityGroup(CommunityGroup cg)
     {
-        var cg = await cgRepository.GetQueryable().Include(c => c.Persons).FirstOrDefaultAsync(c => c.Id == id);
-        if (cg == null)
-        {
-            return NotFound();
-        }
-
-        return Ok(cg);
+        await cgRepository.CreateAsync(cg);
+        return CreatedAtAction(nameof(GetCommunityGroup), new { id = cg.Id }, cg);
     }
 
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> PutCommunityGroup(int id, CommunityGroup cg)
+    public async Task<IActionResult> UpdateCommunityGroup(int id, CommunityGroup cg)
     {
         if (id != cg.Id)
         {
@@ -65,7 +55,6 @@ public class CommunityGroupController(
         try
         {
             await cgRepository.UpdateAsync(cg);
-
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -82,7 +71,37 @@ public class CommunityGroupController(
         return NoContent();
     }
 
-    [HttpPut("/assign/communityId/personId/")]
+    [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> DeleteCommunityGroup(int id)
+    {
+        var cg = await cgRepository.GetByIdAsync(id);
+        if (cg == null)
+        {
+            return NotFound();
+        }
+
+        await cgRepository.DeleteAsync(id);
+
+        return NoContent();
+    }
+
+    [HttpGet("community/persons/{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetCommunityGroupPersons(int id)
+    {
+        var cg = await cgRepository.GetQueryable().Include(c => c.Persons).FirstOrDefaultAsync(c => c.Id == id);
+        if (cg == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(cg);
+    }
+
+    [HttpPut("assign/communityId/personId/")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -100,7 +119,7 @@ public class CommunityGroupController(
         return NoContent();
     }
 
-    [HttpPut("/remove/communityId/personId/")]
+    [HttpPut("remove/communityId/personId/")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -114,31 +133,6 @@ public class CommunityGroupController(
         var person = await personRepository.GetByIdAsync(personId);
         person.CommunityGroupId = null;
         await personRepository.UpdateAsync(person);
-
-        return NoContent();
-    }
-
-    [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created)]
-    public async Task<ActionResult<CommunityGroup>> PostCommunityGroup(CommunityGroup cg)
-    {
-        await cgRepository.CreateAsync(cg);
-
-        return CreatedAtAction("GetCommunityGroup", new { id = cg.Id }, cg);
-    }
-
-    [HttpDelete("{id}")]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> DeleteCommunityGroup(int id)
-    {
-        var cg = await cgRepository.GetByIdAsync(id);
-        if (cg == null)
-        {
-            return NotFound();
-        }
-
-        await cgRepository.DeleteAsync(id);
 
         return NoContent();
     }

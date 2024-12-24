@@ -5,6 +5,8 @@ using CG.Data.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,6 +29,20 @@ public class Startup(IConfiguration configuration)
 
         services.AddControllers().AddJsonOptions(x =>
         x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
+
+        services.AddApiVersioning(options =>
+        {
+            options.AssumeDefaultVersionWhenUnspecified = true;
+            options.DefaultApiVersion = new ApiVersion(1, 0);
+            options.ReportApiVersions = true;
+            options.ApiVersionReader = ApiVersionReader.Combine(
+                new UrlSegmentApiVersionReader());
+        })
+        .AddVersionedApiExplorer(options =>
+        {
+            options.GroupNameFormat = "'v'V";
+            options.SubstituteApiVersionInUrl = true;
+        });
 
         services.AddAuthentication(opt =>
                {

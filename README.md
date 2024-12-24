@@ -4,7 +4,9 @@
 Community Groups is a cross-platform project built with **ASP.NET Core 9**.
 
 ## Purpose and Use Cases
-The project provides RESTful services to facilitate the creation and management of communities and their members. Key features include:
+This project offers RESTful services to support the creation and management of communities and their members. Originally developed as part of an interview exercise, it has recently undergone modernization efforts and is still under active refactoring to improve its structure and align with current best practices.
+
+Key features include:
 
 ### Person Management
 - **Create** a person entry with the following details:

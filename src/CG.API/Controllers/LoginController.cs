@@ -10,7 +10,8 @@ using System.Text;
 
 namespace CG.API.Controllers;
 
-[Route("api/v1/[controller]")]
+[ApiVersion("1")]
+[Route("api/v{version:apiVersion}/[controller]")]
 [ApiController]
 public class LoginController(IConfiguration config) : ControllerBase
 {
