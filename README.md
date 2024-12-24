@@ -1,56 +1,61 @@
-﻿# community groups
+﻿# Community Groups
 
-The project is developed since 2022.
+## Overview
+Community Groups is a cross-platform project built with **ASP.NET Core 9**.
 
-Community Groups is a cross-platform, Docker supported project running on the ASP.NET Core 5 with MSSQL.
+## Purpose and Use Cases
+The project provides RESTful services to facilitate the creation and management of communities and their members. Key features include:
 
-The project can run on Docker (linux or windows) or IIS.
+### Person Management
+- **Create** a person entry with the following details:
+  - First Name
+  - Last Name
+  - Email (unique)
+  - Occupation (optional)
+- **Edit** a person entry
+- **Delete** a person entry
+- **Bulk Create**: Import a CSV file to create multiple person entries
+- **Search, Order, and Paginate** person entries
 
-Https is also supported.
+### Community Group Management
+- **Create** a community group with a name
+- **Edit** the name of a community group
+- **Delete** a community group
+- **Assign** users to a community group
+- **Remove** users from a community group
+- **Retrieve** a community group with its members
 
-## purpose and use cases
+### User Authentication and Authorization
+- **User Registration and Login** with email and password
+- All people and community groups are scoped to the logged-in user
 
-It contains restful services to create a community on any base.
+## API Documentation
+Explore the API endpoints via Swagger:
+- **Swagger URL**: [https://localhost:44308/swagger/index.html](https://localhost:44308/swagger/index.html)
 
-- Create a person entry with the following information:
-	- First name
-	- Last name
-	- Email (unique)
-	- Occupation (optional)
-- Edit a person entry
-- Delete a person entry
-- Import a csv file for bulk creating person entries
-- Search, order and paginate person entries
-- Create a community group with a community name
-- Edit a community group name
-- Delete a community group
-- Assign users to a community group
-- Remove users from a community group
-- Return a community group with the people contained in it
-- Users can register and log in with email and password
-- People and community groups must belong to the logged-in user
+### Authentication
+Authentication is required for accessing most endpoints. Use the following credentials for demo purposes:
+- **Login Path**: `/api/v1/Login/login`
+- **Username**: `crea`
+- **Password**: `crea`
 
-## swagger
+After logging in, include the generated JWT token in the **Authorize** section of Swagger to access the services.
 
-**https://localhost:44308/swagger/index.html** is the adress where you can see the service list.
-Authentication is required before using.
+## Security
+- **JWT Authentication**: Ensures secure access to endpoints.
+- Tokens must be included in requests after login.
 
-## security
+## Architecture
+The project adheres to modern software engineering practices, ensuring scalability and maintainability.
 
-JWT is used on authentication.
-Login path and Demo credentials are given below:
+- **Framework**: Built on .NET Core 9
+- **Authentication**: JWT-based authentication
+- **Data Access**: Implements the Generic Repository Pattern
+- **Error Handling**: Centralized exception handling using Middleware
+- **Database**: Entity Framework Code-First approach
+  - Commands: Use `add-migration` and `update-database` to synchronize the database
 
-**login path:** /api/v1/Login/login
-**username:** crea
-**password:** crea
+## License
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-After giving the credentions you should give the token to the Authorize section of the swagger. Then, you can freely use the services.
-
-## architecture
-
-- .NET Core 5 is used as framework
-- JWT based authentication is used on the security layer
-- Generic Repository Pattern is used on the data access layer
-- Middleware is used as central exception handling
-- URL based versioning is used
-- EntityFramework CodeFirst is used to sync the database **add-migration** and **update-database** commands are necessary
+This project is licensed under the MIT License, which allows you to freely use, modify, and distribute the code. See the [`LICENSE`](LICENSE) file for full details.
