@@ -13,39 +13,22 @@ namespace CG.API.Controllers;
 [Route("api/v1/[controller]")]
 [ApiController]
 [Authorize]
-public class PersonController : ControllerBase
+public class PersonController(
+    IRepository<Person> personRepository,
+    IRepository<CommunityGroup> cgRepository) : ControllerBase
 {
-    #region Fields
-
-    private readonly IRepository<Person> _personRepository;
-    private readonly IRepository<CommunityGroup> _cgRepository;
-
-    #endregion
-
-    #region Ctor
-    public PersonController(IRepository<Person> personRepository,
-        IRepository<CommunityGroup> cgRepository)
-    {
-        _personRepository = personRepository;
-        _cgRepository = cgRepository;
-    }
-
-    #endregion
-
-    #region Methods
-
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<Person>>> GetPersons()
     {
-        return await _personRepository.GetQueryable().ToListAsync();
+        return await personRepository.GetQueryable().ToListAsync();
     }
 
     [HttpGet("/pageNumber/pageSize")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<PaginatedList<Person>>> GetPersonsByPaginated(int pageNumber, int pageSize)
     {
-        return await PaginatedList<Person>.CreateAsync(_personRepository.GetQueryable(), pageNumber, pageSize);
+        return await PaginatedList<Person>.CreateAsync(personRepository.GetQueryable(), pageNumber, pageSize);
     }
 
     [HttpGet("/pageNumber/pageSize/search/sort")]
@@ -53,7 +36,7 @@ public class PersonController : ControllerBase
     public async Task<ActionResult<PaginatedPersonList<Person>>> GetPersonsByPaginatedSearchSort(int pageNumber, int pageSize,
         string search, int sort)
     {
-        return await PaginatedPersonList<Person>.CreatePersonAsync(_personRepository.GetQueryable(), pageNumber, pageSize, search, sort);
+        return await PaginatedPersonList<Person>.CreatePersonAsync(personRepository.GetQueryable(), pageNumber, pageSize, search, sort);
     }
 
     [HttpGet("{id}")]
@@ -61,7 +44,7 @@ public class PersonController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Person>> GetPerson(int id)
     {
-        var person = await _personRepository.GetByIdAsync(id);
+        var person = await personRepository.GetByIdAsync(id);
 
         if (person == null)
         {
@@ -83,7 +66,7 @@ public class PersonController : ControllerBase
         }
         try
         {
-            await _personRepository.UpdateAsync(person);
+            await personRepository.UpdateAsync(person);
 
         }
         catch (DbUpdateConcurrencyException)
@@ -107,11 +90,11 @@ public class PersonController : ControllerBase
     {
         if (string.IsNullOrEmpty(person.Occupation) == false)
         {
-            var existingCG = await _cgRepository.GetQueryable().FirstOrDefaultAsync(f => f.Name == person.Occupation);
+            var existingCG = await cgRepository.GetQueryable().FirstOrDefaultAsync(f => f.Name == person.Occupation);
             if (existingCG != null)
             {
                 person.CommunityGroupId = existingCG.Id;
-                await _personRepository.CreateAsync(person);
+                await personRepository.CreateAsync(person);
             }
             else
             {
@@ -119,8 +102,8 @@ public class PersonController : ControllerBase
                 {
                     Name = person.Occupation
                 };
-                person.CommunityGroupId = (await _cgRepository.CreateAsync(newCG))?.Id;
-                await _personRepository.CreateAsync(person);
+                person.CommunityGroupId = (await cgRepository.CreateAsync(newCG))?.Id;
+                await personRepository.CreateAsync(person);
             }
         }
 
@@ -160,7 +143,7 @@ public class PersonController : ControllerBase
             pList.Add(p);
         }
 
-        await _personRepository.CreateRangeAsync(pList);
+        await personRepository.CreateRangeAsync(pList);
 
         return Ok();
     }
@@ -170,13 +153,13 @@ public class PersonController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> DeletePersonAsync(int id)
     {
-        var person = await _personRepository.GetByIdAsync(id);
+        var person = await personRepository.GetByIdAsync(id);
         if (person == null)
         {
             return NotFound();
         }
 
-        await _personRepository.DeleteAsync(id);
+        await personRepository.DeleteAsync(id);
 
         return NoContent();
     }
@@ -185,15 +168,13 @@ public class PersonController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> DeletePersonRangeAsync(IEnumerable<Person> persons)
     {
-        await _personRepository.DeleteRangeAsync(persons);
+        await personRepository.DeleteRangeAsync(persons);
 
         return NoContent();
     }
 
     private async Task<bool> PersonExists(int id)
     {
-        return await _personRepository.GetQueryable().AnyAsync(f => f.Id == id);
+        return await personRepository.GetQueryable().AnyAsync(f => f.Id == id);
     }
-
-    #endregion
 }

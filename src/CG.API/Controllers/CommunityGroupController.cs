@@ -12,32 +12,15 @@ namespace CG.API.Controllers;
 [Route("api/v1/[controller]")]
 [ApiController]
 [Authorize]
-public class CommunityGroupController : ControllerBase
+public class CommunityGroupController(
+    IRepository<CommunityGroup> cgRepository,
+    IRepository<Person> personRepository) : ControllerBase
 {
-    #region Fields
-
-    private readonly IRepository<CommunityGroup> _cgRepository;
-    private readonly IRepository<Person> _personRepository;
-
-    #endregion
-
-    #region Ctor
-    public CommunityGroupController(IRepository<CommunityGroup> cgRepository,
-        IRepository<Person> personRepository)
-    {
-        _cgRepository = cgRepository;
-        _personRepository = personRepository;
-    }
-
-    #endregion
-
-    #region Methods
-
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<CommunityGroup>>> GetCommunityGroups()
     {
-        return await _cgRepository.GetQueryable().ToListAsync();
+        return await cgRepository.GetQueryable().ToListAsync();
     }
 
     [HttpGet("{id}")]
@@ -45,7 +28,7 @@ public class CommunityGroupController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<CommunityGroup>> GetCommunityGroup(int id)
     {
-        var cg = await _cgRepository.GetByIdAsync(id);
+        var cg = await cgRepository.GetByIdAsync(id);
 
         if (cg == null)
         {
@@ -60,7 +43,7 @@ public class CommunityGroupController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetCommunityGroupWithPersons(int id)
     {
-        var cg = await _cgRepository.GetQueryable().Include(c => c.Persons).FirstOrDefaultAsync(c => c.Id == id);
+        var cg = await cgRepository.GetQueryable().Include(c => c.Persons).FirstOrDefaultAsync(c => c.Id == id);
         if (cg == null)
         {
             return NotFound();
@@ -81,7 +64,7 @@ public class CommunityGroupController : ControllerBase
         }
         try
         {
-            await _cgRepository.UpdateAsync(cg);
+            await cgRepository.UpdateAsync(cg);
 
         }
         catch (DbUpdateConcurrencyException)
@@ -110,9 +93,9 @@ public class CommunityGroupController : ControllerBase
             return NotFound();
         }
 
-        var person = await _personRepository.GetByIdAsync(personId);
+        var person = await personRepository.GetByIdAsync(personId);
         person.CommunityGroupId = communityId;
-        await _personRepository.UpdateAsync(person);
+        await personRepository.UpdateAsync(person);
 
         return NoContent();
     }
@@ -128,9 +111,9 @@ public class CommunityGroupController : ControllerBase
             return NotFound();
         }
 
-        var person = await _personRepository.GetByIdAsync(personId);
+        var person = await personRepository.GetByIdAsync(personId);
         person.CommunityGroupId = null;
-        await _personRepository.UpdateAsync(person);
+        await personRepository.UpdateAsync(person);
 
         return NoContent();
     }
@@ -139,7 +122,7 @@ public class CommunityGroupController : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<ActionResult<CommunityGroup>> PostCommunityGroup(CommunityGroup cg)
     {
-        await _cgRepository.CreateAsync(cg);
+        await cgRepository.CreateAsync(cg);
 
         return CreatedAtAction("GetCommunityGroup", new { id = cg.Id }, cg);
     }
@@ -149,25 +132,23 @@ public class CommunityGroupController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> DeleteCommunityGroup(int id)
     {
-        var cg = await _cgRepository.GetByIdAsync(id);
+        var cg = await cgRepository.GetByIdAsync(id);
         if (cg == null)
         {
             return NotFound();
         }
 
-        await _cgRepository.DeleteAsync(id);
+        await cgRepository.DeleteAsync(id);
 
         return NoContent();
     }
 
     private async Task<bool> CommunityGroupExists(int id)
     {
-        return await _cgRepository.GetQueryable().AnyAsync(f => f.Id == id);
+        return await cgRepository.GetQueryable().AnyAsync(f => f.Id == id);
     }
     private async Task<bool> PersonExists(int id)
     {
-        return await _personRepository.GetQueryable().AnyAsync(f => f.Id == id);
+        return await personRepository.GetQueryable().AnyAsync(f => f.Id == id);
     }
-
-    #endregion
 }

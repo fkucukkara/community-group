@@ -6,12 +6,19 @@ using System.Threading.Tasks;
 
 namespace CG.Core.Utilities;
 
-public class PaginatedPersonList<T> : PaginatedList<T> where T : Person
+public class PaginatedPersonList<T>(
+    List<T> items,
+    int count,
+    int pageIndex,
+    int pageSize) : PaginatedList<T>(items, count, pageIndex, pageSize)
+    where T : Person
 {
-    public PaginatedPersonList(List<T> items, int count, int pageIndex, int pageSize) : base(items, count, pageIndex, pageSize)
-    { }
-
-    public static async Task<PaginatedPersonList<T>> CreatePersonAsync(IQueryable<T> source, int pageIndex, int pageSize, string search, int sort)
+    public static async Task<PaginatedPersonList<T>> CreatePersonAsync(
+        IQueryable<T> source,
+        int pageIndex,
+        int pageSize,
+        string search,
+        int sort)
     {
         var count = await source.CountAsync();
 

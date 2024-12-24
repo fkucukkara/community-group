@@ -3,11 +3,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CG.Data.DBContext;
 
-public class CGDBContext : DbContext
+public class CGDBContext(DbContextOptions<CGDBContext> options) : DbContext(options)
 {
-    public CGDBContext(DbContextOptions<CGDBContext> options) : base(options)
-    { }
-
     public DbSet<Person> Persons { get; set; }
     public DbSet<CommunityGroup> CommunityGroups { get; set; }
 }

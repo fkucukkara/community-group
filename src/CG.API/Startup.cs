@@ -16,14 +16,10 @@ using System.Text.Json.Serialization;
 
 namespace CG.API;
 
-public class Startup
+public class Startup(IConfiguration configuration)
 {
-    public readonly IConfiguration Configuration;
+    public readonly IConfiguration Configuration = configuration;
 
-    public Startup(IConfiguration configuration)
-    {
-        Configuration = configuration;
-    }
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddDbContext<CGDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("CommunityGroupsDB")));
